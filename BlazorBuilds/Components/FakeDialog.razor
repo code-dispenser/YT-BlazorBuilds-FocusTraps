@@ -1,0 +1,79 @@
+﻿<style>
+    .overlay {
+        z-index:2;
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background-color: rgba(0,0,0,0.20);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .fake-modal {
+        width: 50vw;
+        background-color:white;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        box-shadow: 0 8px 17px 2px rgba(0,0,0,0.14), 0 3px 14px 2px rgba(0,0,0,0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2);
+    }
+</style>
+
+@if (true == _showDialog)
+{
+    /*
+        * We could have put the focus trap here.
+    */
+@*     <FocusTrapAllJS Disabled="@(!_showDialog)"> *@
+
+        <div class="overlay">
+            <div class="fake-modal">
+                <EditForm Model="Model">
+                    <h2>Fake dialog form</h2>
+                    <label class="form-label" for="textBoxFieldOne">Field One:</label>
+                    <InputText id="textBoxFieldOne" Class="form-control" @bind-Value="Model.FieldOne" />
+
+                    <label class="form-label" for="textBoxFieldTwo">Field Two::</label>
+                    <InputText id="textBoxFieldTwo" Class="form-control" @bind-Value="Model.FieldTwo" />
+
+                    <label class="form-label" for="textBoxFieldThree">Field Three:</label>
+                    <InputText id="textBoxFieldThree" Class="form-control" @bind-Value="Model.FieldThree" />
+
+                    <button type="button" class="btn btn-primary mt-3" @onclick="RaiseOnClose">Close</button>
+                </EditForm>
+            </div>
+        </div>
+
+@*     </FocusTrapAllJS> *@
+
+}
+
+@code {
+    private bool _showDialog = false;
+    private FakeModel Model { get; set; } = new FakeModel();
+
+    [Parameter] public EventCallback OnClose    { get; set; }
+    [Parameter] public bool          ShowDialog { get; set; }
+
+    private async Task RaiseOnClose()
+    {
+        if (OnClose.HasDelegate) await OnClose.InvokeAsync();
+        Model = new FakeModel();
+        _showDialog = false;
+    }
+
+    protected override void OnParametersSet()
+    {
+        _showDialog = ShowDialog;
+        base.OnParametersSet();
+    }
+
+    public class FakeModel
+    {
+        public string FieldOne { get; set; }
+        public string FieldTwo { get; set; }
+        public string FieldThree { get; set; }
+    }
+
+}

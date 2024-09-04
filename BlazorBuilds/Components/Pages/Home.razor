@@ -1,0 +1,62 @@
+﻿@page "/"
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, <span style="text-decoration: line-through;">World!</span> Focus Traps</h1>
+
+<button class="btn btn-primary mb-3 mt-4" @ref="_buttonRefNoTrap" @onclick="() => {_showDialogNoTrap = true;}">Show Fake Modal Dialog No Foucs Trap</button>
+<br />
+<button class="btn btn-primary mb-3" @ref="_buttonRefBlazorOnly" @onclick="() => {_showDialogBlazorOnly = true;}">Show Fake Modal Dialog With Blazor Only Focus Trap</button>
+<br />
+<button class="btn btn-primary mb-3" @ref="_buttonRefBlazorJs" @onclick="() => {_showDialogBlazorJs = true;}">Show Fake Modal Dialog With Blazor Focus Trap Using JS Focus</button>
+<br />
+<button class="btn btn-primary mb-3" @ref="_buttonRefAllJs" @onclick="() => {_showDialogAllJs = true;}">Show Fake Modal Dialog With Blazor Focus Trap Using All JS</button>
+
+<FakeDialog OnClose="HandleOnCloseNoTrap" ShowDialog="_showDialogNoTrap" />
+
+<FocusTrapBlazor Disabled="@(!_showDialogBlazorOnly)">
+    <FakeDialog OnClose="HandleOnCloseBlazorOnly" ShowDialog="_showDialogBlazorOnly" />
+</FocusTrapBlazor> 
+
+<FocusTrapBlazorJS Disabled="@(!_showDialogBlazorJs)">
+    <FakeDialog OnClose="HandleOnCloseBlazorJs" ShowDialog="_showDialogBlazorJs"  />
+</FocusTrapBlazorJS>
+
+<FocusTrapAllJS Disabled="@(!_showDialogAllJs)">
+    <FakeDialog OnClose="HandleOnCloseAllJs" ShowDialog="_showDialogAllJs" />
+</FocusTrapAllJS>
+
+@code{
+    private bool _showDialogNoTrap       = false;
+    private bool _showDialogBlazorOnly   = false;
+    private bool _showDialogBlazorJs     = false;
+    private bool _showDialogAllJs        = false;
+
+    private ElementReference _buttonRefNoTrap       { get; set; }
+    private ElementReference _buttonRefBlazorOnly   { get; set; }
+    private ElementReference _buttonRefBlazorJs     { get; set; }
+    private ElementReference _buttonRefAllJs        { get; set; }
+
+    public async Task HandleOnCloseNoTrap()
+    {
+        _showDialogNoTrap = false;
+        await _buttonRefNoTrap.FocusAsync();
+    }
+    
+    public async Task HandleOnCloseBlazorOnly()
+    {
+        _showDialogBlazorOnly = false;
+        await _buttonRefBlazorOnly.FocusAsync();
+    }
+    
+    public async Task HandleOnCloseBlazorJs()
+    {
+        _showDialogBlazorJs = false;
+        await _buttonRefBlazorJs.FocusAsync();
+    }
+
+    public async Task HandleOnCloseAllJs()
+    {
+        _showDialogAllJs = false;
+        await _buttonRefAllJs.FocusAsync();
+    }
+}

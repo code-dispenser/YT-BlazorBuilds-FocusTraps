@@ -1,0 +1,60 @@
+﻿@implements IAsyncDisposable
+@inject IJSRuntime _jsRuntime
+
+<div @ref="_focusTrap">
+    @ChildContent
+</div>
+
+@code {
+
+    private ElementReference    _focusTrap { get; set; }
+    private IJSObjectReference  _focusModule = default!;
+    private bool                _focusCaptured;
+
+    [EditorRequired, Parameter] public bool Disabled { get; set; } = true;
+    [Parameter] public RenderFragment? ChildContent  { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (true == firstRender) _focusModule = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazorBuilds.Components/assets/js/focusTrap.js");
+
+        if (true == firstRender && false == Disabled) await SetCapturedState();
+
+        if (false == firstRender && false == _focusCaptured &&  false == Disabled) await SetCapturedState();
+
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (true == Disabled) await SetUnCapturedState();
+    }
+
+    private async Task SetCapturedState()
+    {
+        await RegisterEvents();
+        await _focusModule.InvokeVoidAsync("setChildFocus", _focusTrap, true, 0);
+        _focusCaptured = true;
+    }
+
+    private async Task SetUnCapturedState()
+    {
+        _focusCaptured = false;
+        await UnRegisterEvents();
+    }
+
+    private async ValueTask UnRegisterEvents()
+    {
+        if (_focusModule is not null) await _focusModule.InvokeVoidAsync("unregisterFocusTrapEvents", _focusTrap);
+    }
+    private async ValueTask RegisterEvents()
+    {
+        await UnRegisterEvents();
+        if (_focusModule is not null) await _focusModule.InvokeVoidAsync("registerFocusTrapEvents", _focusTrap);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await UnRegisterEvents();
+        if (_focusModule is not null) await _focusModule.DisposeAsync();
+    }
+}
