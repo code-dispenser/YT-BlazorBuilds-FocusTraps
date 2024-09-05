@@ -8,6 +8,6 @@ The YouTube video mentions how the Focus Trap may need to set focus on its first
 
 The video is only ten minutes long, so if you stumbled across this repo, it may be worth taking a look as the video serves as the documentation.
 
-YouTube video : Should be posted later today, will update when I have the link.
+YouTube video : https://youtu.be/xoHs4kQCbQU
 
 Coffees welcomed : https://ko-fi.com/codedispenser
